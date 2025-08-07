@@ -1,0 +1,68 @@
+removed all json file with 'SummaryCategories' = folder
+'fileversion' is common for all test cases              #remove_column
+'short name' is unique for all test cases               #remove_column
+'Description' is repeated but different test cases 
+'SummaryCategories'
+Test - HIL       418
+Test - System      8
+Test               8
+'testCaseShoortName' is unique for all.                 #remove_column
+'process' null for all.                                 #remove_column
+'State' active for all                                  #remove_column
+'RequirementID' null for all.                           #remove_column
+'expectedResults' repeated for similar test cases with different values
+'testcaseId' all unique but one NaN TestCase-1738823512039.json #can be removed
+'refId' all unique but one NaN TestCase-1738823512039.json      #can be removed
+'refMode' multiple NaN                                  #remove_column
+'createdBy' missing TestCase-1738823512039.json         #remove_column
+'modifiedBy' missing TestCase-1738823512039.json        #remove_column
+'priority' all NaN                                      #remove_column
+'externalId' multiple NaN                               #remove_column
+'externalScriptName' multiple NaN                       #remove_column
+'createdDate' {not relavent}                                #remove_column
+'modifiedDate' {not relavent}                               #remove_column
+'automatedBehavioronError' all unique                   #remove_column 
+'tocomment' all NaN                                     #remove_column   
+'fromcomment' all NaN                                   #remove_column
+'displayOnTree' true for all                            #remove_column
+'displayOnTable' true for all                           #remove_column
+'precondition' half NaN and some external links mks tool        #not_sure
+'postcondition' mostly NaN and some external links mks tool     #not_sure
+'testSteps' repeated for 80 test cases ex:SensePackVoltErr_Faults and SenseLoadVoltErr_Faults almost same test cases and parameters
+'path' unique for all {not relavent}                    #remove_column
+'documentId' folder id {not relavent}                   #remove_column
+'status' draft for all                                  #remove_column
+'version' repeated categorical {not relavent}           #remove_column
+'updateversion' same for all   {not relavent}           #remove_column
+'createdate' repeated categorical {not relavent}        #remove_column
+'modifiedate' repeated categorical {not relavent}       #remove_column
+'parentId' repeated categorical {not relavent}          #remove_column
+'insertLocation' not                                            #not_sure
+'testcasePTCModifiedDate'       {not relavent}          #remove_column
+'summaryCategoriesModifyflag'   {not relavent}          #remove_column
+'descriptionModifyflag'         {not relavent}          #remove_column
+all modify flags ['testStepsModifyflag','preconditionModifyflag','postconditionModifyflag',
+'expectedResultsModifyflag','parameterPtclistModifyflag','StateModifyflag','priorityModifyflag',
+'tocommentModifyflag','statusflag']{not relavent}          #remove_column
+['traceabiltyMofifyflag','mitescriptflag','checkBoxflag',
+'testcaseenable'] all False     {not relavent}          #remove_column
+'testScriptEditFlag'            {not relavent}          #remove_column
+'TestCaseFormid' test cases generated manually
+'ParametersList' #not_sure  
+'deleterelations' #not_sure
+'file_name' unique name added manually name of the file
+'Parameter' #not_sure
+'RelationShips'  to identify req, juicebox many NaN values
+'miteXmlData' #not_sure
+'testScriptName' all NaN        {not relavent}          #remove_column
+'ParameterValues' only one available        #not_sure
+
+#### JSON INTERNAL LEVELS #####
+
+'ParametersList' brackets not consistent over all files
+
+
+
+
+
+
