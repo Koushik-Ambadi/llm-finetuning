@@ -57,9 +57,23 @@ all modify flags ['testStepsModifyflag','preconditionModifyflag','postconditionM
 'testScriptName' all NaN        {not relavent}          #remove_column
 'ParameterValues' only one available        #not_sure
 
+
+
 #### JSON INTERNAL LEVELS #####
 
+
+
 'ParametersList' brackets not consistent over all files
+list not used for single dictionaries
+
+##ParametersList
+datatype all nulls               #remove_column
+commonname all nulls             #remove_column
+longshortname all nulls          #remove_column
+referencenumber not sure         #canBeRemoved
+labeltype looks like unique id   #remove_column
+reloadflag some are true         #canBeRemoved
+
 
 
 
