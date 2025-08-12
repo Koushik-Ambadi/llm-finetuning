@@ -101,6 +101,12 @@ optional removes (referencenumber, reloadflag).
 	Merging processed data back to the original DataFrame
 	Exporting results for review
 
+**📅 Day 6:**
+
+* Cleaned Parameters, ParameterValues, and Relationships columns.
+* Applied same parsing, normalization, and merging techniques as used for ParametersList.
+* Ensured final DataFrame structure is consistent for downstream processing.
+* Found html tags in pre,post conditions and expected results.
 
 
 

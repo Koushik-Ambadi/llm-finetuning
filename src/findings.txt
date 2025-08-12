@@ -75,8 +75,18 @@ labeltype looks like unique id   #remove_column
 reloadflag some are true         #canBeRemoved
 
 
+##Parameter
+description all nulls            #remove_column
+valuedescription                 #remove_column
+referencenumber                  #remove_column
 
+##Parametervalue
+paramterDescription              #remove_column
+valueDescription                 #remove_column
+locked                           #remove_column
 
-
-
-
+##Relarionships
+Id --> not necessary for finetunig 
+internal use only                #remove_column
+refID                            #remove_column
+            
