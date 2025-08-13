@@ -108,6 +108,17 @@ optional removes (referencenumber, reloadflag).
 * Ensured final DataFrame structure is consistent for downstream processing.
 * Found html tags in pre,post conditions and expected results.
 
+**📅 Day 7:**
+
+* Explored new BMW dataset structure and contents.
+* Inspected PreCondition and PostCondition columns for embedded HTML.
+* Used regex to identify unique HTML tags present in these fields.
+* Cleaned HTML tags from the dataset using BeautifulSoup (bs4).
+* Ensured cleaned text retains original meaning and formatting where necessary.
+
+
+
+
 
 
 
