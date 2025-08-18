@@ -59,7 +59,7 @@ all modify flags ['testStepsModifyflag','preconditionModifyflag','postconditionM
 
 
 
-#### JSON INTERNAL LEVELS #####
+#### JSON INTERNAL CLEANING #####
 
 
 
@@ -90,3 +90,9 @@ Id --> not necessary for finetunig
 internal use only                #remove_column
 refID                            #remove_column
             
+##TestCaseformID
+stepData many null values
+refId can be removed
+extensionsHideInfomation   can be removed
+imageHideInformation   all null values remove column
+

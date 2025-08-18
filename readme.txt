@@ -116,6 +116,11 @@ optional removes (referencenumber, reloadflag).
 * Cleaned HTML tags from the dataset using BeautifulSoup (bs4).
 * Ensured cleaned text retains original meaning and formatting where necessary.
 
+**📅 Day 8:**
+
+*Identified numeric-like HTML tags in TestCaseFormID (regex flagged them as tags).
+*Used BeautifulSoup to clean HTML tags in TestCaseFormID, which contains PreConditions, PostConditions, and actual test steps.
+*Planned to split these components and re-clean unnecessary fields.
 
 
 
