@@ -18,6 +18,7 @@ df.drop(['fileversion','ShortName','process','testCaseShoortName','State','Requi
          'statusflag','traceabiltyMofifyflag','mitescriptflag','checkBoxflag','testcaseenable',
          'testScriptEditFlag','testScriptName','miteXmlData','deleterelations','insertLocation',
          'SummaryCategories','expectedResults',
+         'precondition','postcondition',
          'ParameterValues', #only one row have this
          'RelationShips'],axis=1,inplace=True)
 
@@ -25,7 +26,9 @@ df.drop(['fileversion','ShortName','process','testCaseShoortName','State','Requi
 df.to_csv("C://Users//koushik//Desktop//project//data//flat_dataset//intermediate_dataset.csv", index=False, encoding='utf-8')
 
 
-cols_to_drop = ['refId','stepData','id','type','extensionsHideInfomation','imageHideInformation','extnId']
-pipeline(df, 'TestCaseFormid', cols_to_drop)
+df=pipeline(df)
+
+df.to_csv("C://Users//koushik//Desktop//project//data//flat_dataset//final_dataset.csv", index=False, encoding='utf-8')
+
 
 
