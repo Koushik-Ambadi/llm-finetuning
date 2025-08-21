@@ -2,13 +2,12 @@ import pandas as pd
 import ast
 
 
-def parse_column(df):
+def parse_column(df, column_name='TestCaseFormid'):
     """
     Returns a new DataFrame with non-null rows from `column_name`,
     parsing the column safely into lists of dicts.
     Does NOT modify the original DataFrame.
     """
-    column_name='TestCaseFormid'
     def _parse(x):
         if pd.isna(x):
             return x

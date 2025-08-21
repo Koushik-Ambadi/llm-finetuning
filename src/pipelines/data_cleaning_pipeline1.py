@@ -11,7 +11,7 @@ from utils.html_cleaner import clean_html_columns
 
 
 
-def pipeline(df):
+def pipeline(df,write_path):
     """
     Full pipeline: parse, expand, clean, and merge parameter column.
     """
@@ -26,6 +26,6 @@ def pipeline(df):
     temp_dataframe = clean_column(temp_dataframe,cols_to_drop)
     df = merge_df(df, temp_dataframe)
     df = clean_html_columns(df, columns_to_clean)
-    return df
+    df.to_csv(write_path, index=False, encoding='utf-8')
 
 

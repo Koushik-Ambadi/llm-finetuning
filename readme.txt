@@ -122,6 +122,19 @@ optional removes (referencenumber, reloadflag).
 *Used BeautifulSoup to clean HTML tags in TestCaseFormID, which contains PreConditions, PostConditions, and actual test steps.
 *Planned to split these components and re-clean unnecessary fields.
 
+**📅 Day 9:**
+
+commit: refactor(utils): reorganize utility modules and add preprocessing steps
+------------------------------------------------------------------------------
+- Consolidated parse_column, normalize_column, clean_column, merge_df into columns.py
+- Renamed extract_html.py → html.py for clarity
+- Updated utils/__init__.py exports accordingly
+- Reduced fragmentation by avoiding too many single-function utils files
+- Added preprocessing in clean_column to drop:
+  • type == "Pre Conditions"
+  • type == "Post Conditions"
+  • action == "Test Sequence"
+
 
 
 
