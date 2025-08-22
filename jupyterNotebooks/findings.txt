@@ -96,3 +96,38 @@ refId can be removed
 extensionsHideInfomation   can be removed
 imageHideInformation   all null values remove column
 
+                                
+
+                                ########   BMW Data set from mite  ########
+
+section > file hirarchy  #can be removed
+category > only system test rows remain remaining  #rows can be removed but some comment category also have test sequence
+reference mode > common for all #can be removed
+text > discription of the test
+id > unique for all may help to link with corresponding requirement #can beremoved other wise
+Document ID > common for all may be unique id for suit #can be removed
+validates > arr of numbers identify corresponding requirements m:m relationship
+    one test case have many requirements
+    one requirements have many test cases
+==> collect all unique numbers in validates column and check if every requirement is covered
+External ID > four unique values have to check if it gives any value
+    TestEnvMonHil_Mite_SemiAutomated         41
+    TestEnvMonHil_Mite_FullyAutomated         7
+    TestEnvMonitor_Mite_Dlt_SemiAutomated     1
+Priority > may give value keep it
+    Critical    29
+    Low         15
+External Script Name > common for all #can be removed
+Created Date > meta data #can be removed
+Status_fld > meta data #can be removed
+Precondition > refers to other tets case with {id} column in the data set. also text says refered test case is a precondition.
+post condition > similar to pre condition refers to other test case with unique id common for all
+
+
+
+
+
+
+
+
+
