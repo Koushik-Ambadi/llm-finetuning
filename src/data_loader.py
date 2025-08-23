@@ -1,7 +1,6 @@
 import pandas as pd
 def load_data(path):
     df=pd.read_csv(path)
-    df.columns = [col.split('.')[-1] for col in df.columns]
     df = df[df['SummaryCategories'] != 'Folder'] #Folder columns
     df.drop(['fileversion','ShortName','process','testCaseShoortName','State','RequirementID','testcaseId',
          'refId','refMode','modifiedBy','createdBy','modifiedBy','priority','externalId',

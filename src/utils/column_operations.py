@@ -2,7 +2,7 @@ import pandas as pd
 import ast
 
 
-def parse_column(df, column_name='TestCaseFormid'):
+def parse_column(df, column_name):
     """
     Returns a new DataFrame with non-null rows from `column_name`,
     parsing the column safely into lists of dicts.
@@ -29,7 +29,7 @@ def parse_column(df, column_name='TestCaseFormid'):
     return valid_dataframe
 
 
-def normalize_column(valid_dataframe, column_name='TestCaseFormid', id_column='file_name'):
+def normalize_column(valid_dataframe, column_name, id_column='file_name'):
     """
     Extracts list-of-dict entries from a parsed column into flat rows,
     tagging each with its associated ID (like file_name).
@@ -50,6 +50,14 @@ def normalize_column(valid_dataframe, column_name='TestCaseFormid', id_column='f
 
     normalized_df = pd.DataFrame(extracted_rows)
 
+    # Add parent column name as prefix to all columns except id_column
+    if not normalized_df.empty:
+        normalized_df.rename(
+            columns={col: f"{column_name}.{col}" for col in normalized_df.columns if col != id_column},
+            inplace=True
+            )
+
+
     '''
     # === Print summary of normalization ===
     input_count = valid_dataframe[id_column].nunique()
@@ -60,16 +68,18 @@ def normalize_column(valid_dataframe, column_name='TestCaseFormid', id_column='f
     return normalized_df
 
 
-def clean_column(normalized_df, cols_to_drop=[],column_name='TestCaseFormid', id_column='file_name'):
+'''def clean_column(normalized_df, column_name, cols_to_drop=[], id_column='file_name'):
+
     """
     Clean extracted parameter DataFrame:
     - Drop unwanted columns
     - Group back into list-of-dicts per id_column
     """
-    normalized_df = normalized_df[
-    (normalized_df["type"] != "Pre Conditions") &
-    (normalized_df["type"] != "Post Conditions") &
-    (normalized_df["action"] != "Test Sequence")]
+    if(column_name=='TestCaseFormid'):
+        normalized_df = normalized_df[
+        (normalized_df["type"] != "Pre Conditions") &
+        (normalized_df["type"] != "Post Conditions") &
+        (normalized_df["action"] != "Test Sequence")]
     
     if cols_to_drop: 
         normalized_df = normalized_df.drop(columns=[c for c in cols_to_drop if c in normalized_df.columns])
@@ -83,9 +93,50 @@ def clean_column(normalized_df, cols_to_drop=[],column_name='TestCaseFormid', id
     )
 
     return grouped_df
+'''
 
 
-def merge_df(df, grouped_df,column_name='TestCaseFormid', id_column='file_name'):
+def clean_column(normalized_df, column_name, cols_to_drop=[], id_column='file_name'):
+    """
+    Clean extracted parameter DataFrame:
+    - Drop unwanted columns
+    - Strip parent column name from all columns (except id_column)
+    - Group back into list-of-dicts per id_column
+    """
+
+    # === Optional filtering for a specific column ===
+    if column_name == 'TestCaseFormid':
+        normalized_df = normalized_df[
+            (normalized_df[f"{column_name}.type"] != "Pre Conditions") &
+            (normalized_df[f"{column_name}.type"] != "Post Conditions") &
+            (normalized_df[f"{column_name}.action"] != "Test Sequence")
+        ]
+
+    # === Drop unwanted columns ===
+    if cols_to_drop:
+        normalized_df = normalized_df.drop(columns=[c for c in cols_to_drop if c in normalized_df.columns])
+
+    # === Remove parent prefix from all columns except id_column ===
+    prefix = f"{column_name}."
+    rename_map = {
+        col: col.replace(prefix, '') for col in normalized_df.columns
+        if col != id_column and col.startswith(prefix)
+    }
+    normalized_df = normalized_df.rename(columns=rename_map)
+
+    # === Group back to list-of-dicts per ID ===
+    grouped_df = (
+        normalized_df
+        .groupby(id_column)
+        .apply(lambda g: g.drop(columns=id_column).to_dict(orient='records'))
+        .reset_index(name=f'Cleaned{column_name}')
+    )
+
+    return grouped_df
+
+
+
+def merge_df(df, grouped_df,column_name, id_column='file_name'):
     """
     Merge the cleaned parameter list back into the original DataFrame.
     Dynamically detects the cleaned column name from grouped_df.
