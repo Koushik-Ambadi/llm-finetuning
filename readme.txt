@@ -118,26 +118,53 @@ optional removes (referencenumber, reloadflag).
 
 **📅 Day 8:**
 
-*Identified numeric-like HTML tags in TestCaseFormID (regex flagged them as tags).
-*Used BeautifulSoup to clean HTML tags in TestCaseFormID, which contains PreConditions, PostConditions, and actual test steps.
-*Planned to split these components and re-clean unnecessary fields.
+* Identified numeric-like HTML tags in TestCaseFormID (regex flagged them as tags).
+* Used BeautifulSoup to clean HTML tags in TestCaseFormID, which contains PreConditions, PostConditions, and actual test steps.
+* Planned to split these components and re-clean unnecessary fields.
 
 **📅 Day 9:**
 
 commit: refactor(utils): reorganize utility modules and add preprocessing steps
 ------------------------------------------------------------------------------
-- Consolidated parse_column, normalize_column, clean_column, merge_df into columns.py
-- Renamed extract_html.py → html.py for clarity
-- Updated utils/__init__.py exports accordingly
-- Reduced fragmentation by avoiding too many single-function utils files
-- Added preprocessing in clean_column to drop:
+* Consolidated parse_column, normalize_column, clean_column, merge_df into columns.py
+* Renamed extract_html.py → html.py for clarity
+* Updated utils/__init__.py exports accordingly
+* Reduced fragmentation by avoiding too many single-function utils files
+* ded preprocessing in clean_column to drop:
   • type == "Pre Conditions"
   • type == "Post Conditions"
   • action == "Test Sequence"
 
 
+**📅 Day 10:**
+
+* Worked on BMW Mite dataset (test cases).
+* Identified irrelevant fields to drop (section, reference mode, Document ID, External Script Name, metadata fields).
+* Found key useful fields:
+    -text (test description),
+    -validates (links to requirements, m:m relationship),
+    -priority,
+    -pre/post conditions (with referenced IDs).
+* Confirmed traceability exists: every test case validates at least one requirement.
+* Discussed strategy for linking requirements & test cases in fine-tuning dataset:
+    -Option A: keep requirement IDs as list inside test case.
+    -Decided to go with this option to maintain balance and avoid duplication.
+* Considered how to handle pre/post conditions: decided to append referenced ID into description when explicitly mentioned (e.g., “run test case 1059666”).
+* For training data, plan to set null for unused fields (to avoid token bloat).
 
 
+**📅 Day 10:**
+
+* Analyzed BMW Mite requirements dataset.
+* Droppable fields: section, Document ID, Legacy Branches, Non-Functional Requirement, Document.
+* Useful fields:
+    -text (requirement description),
+    -Category (Functional/Heading/Interface/Technical/Business).
+* Plan: append Heading rows to enrich requirement descriptions for context.
+* Confirmed traceability link: validates in test cases ↔ ID in requirements.
+* Final mapping ensures every requirement is covered by at least one test case.
+* Pipeline refactoring: discussed making pipeline column-agnostic by looping over columns_to_clean list instead of hardcoding.
+* Discussed fine-tuning dataset structure: two main files (requirements + test cases) vs merged dataset, leaned toward separate but linked (via validates).
 
 
 

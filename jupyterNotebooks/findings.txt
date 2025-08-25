@@ -100,11 +100,13 @@ imageHideInformation   all null values remove column
 
                                 ########   BMW Data set from mite  ########
 
+# findings in testcases
+
 section > file hirarchy  #can be removed
 category > only system test rows remain remaining  #rows can be removed but some comment category also have test sequence
 reference mode > common for all #can be removed
 text > discription of the test
-id > unique for all may help to link with corresponding requirement #can beremoved other wise
+id > unique for all. may help to link with corresponding requirement. refered this while using sub test cases or pre and post conditiond. #can beremoved other wise
 Document ID > common for all may be unique id for suit #can be removed
 validates > arr of numbers identify corresponding requirements m:m relationship
     one test case have many requirements
@@ -123,7 +125,27 @@ Status_fld > meta data #can be removed
 Precondition > refers to other tets case with {id} column in the data set. also text says refered test case is a precondition.
 post condition > similar to pre condition refers to other test case with unique id common for all
 
+                                
+# findings in requirements
 
+section > file hirarchy  #can be removed
+ID > unique for all  #can be removed
+Document ID > same for all #can be removed
+Category > describes the row type
+    Functional Requirement        1268
+    Heading                        230 #can be useful for discription => append this column toactual test cases
+    Comment                         53
+    Interface Requirement           29
+    Technical Requirement            5
+    Business Requirement             2
+    Non-Functional Requirement       1 #can be removed
+    Document                         1 discription #can be removed
+text > discription #useful
+Decomposed From > many null values 
+Validated By > refers to the corresonding test case
+Satisfied By > many nulls not sure wh it is used. can find these in test cases.
+Legacy Branches > all nulls #can be removed.
+Required Test Type > not sure why it is used.
 
 
 
