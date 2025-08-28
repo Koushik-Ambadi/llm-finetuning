@@ -153,7 +153,7 @@ commit: refactor(utils): reorganize utility modules and add preprocessing steps
 * For training data, plan to set null for unused fields (to avoid token bloat).
 
 
-**📅 Day 10:**
+**📅 Day 11:**
 
 * Analyzed BMW Mite requirements dataset.
 * Droppable fields: section, Document ID, Legacy Branches, Non-Functional Requirement, Document.
@@ -167,6 +167,60 @@ commit: refactor(utils): reorganize utility modules and add preprocessing steps
 * Discussed fine-tuning dataset structure: two main files (requirements + test cases) vs merged dataset, leaned toward separate but linked (via validates).
 
 
+📅 Day 12:
+
+Implemented a modular pipeline to prepare training data for fine-tuning a Mistral-3B model on requirement-to-test-case generation.
+Loaded and cleaned a custom dataset (final_dataset.csv) using pandas and converted it into a Hugging Face Dataset for compatibility with the transformers and trl libraries.
+
+Created a prompt template to instruct the model:
+
+"Write a test case for the following requirement:"
+This guided instruction was used to align the model's behavior with real-world inference tasks.
+
+Defined a format_prompt() function and applied it using .map() to generate structured "input" and "output" fields — necessary for supervised fine-tuning.
+
+Split the dataset with a 99/1 train-test ratio to retain as much data for learning while keeping a tiny evaluation set.
+
+Loaded the local tokenizer from the base Mistral-3B-Instruct model and manually set the padding token to eos_token to avoid warnings and ensure proper padding during batching.
+
+Created a custom tokenize_function() to:
+
+Concatenate input and output as a single sequence,
+
+Truncate to a maximum length (2048 tokens),
+
+Apply consistent padding,
+
+Replace padding token IDs with -100 in labels to mask them during loss computation (ensures model doesn’t learn from padded tokens).
+
+Applied tokenization using .map() and set the dataset format to "torch" for PyTorch training compatibility.
+
+
+📅 Day 13:
+
+Loaded the Mistral-3B base model in 4-bit precision (load_in_4bit=True) using transformers for memory-efficient fine-tuning on CPU.
+
+Applied PEFT (Parameter-Efficient Fine-Tuning) using LoRA:
+
+Used prepare_model_for_kbit_training() to allow 4-bit quantized fine-tuning.
+
+Defined a LoraConfig with r=8, alpha=32, and lora_dropout=0.05, targeting the q_proj and v_proj layers — commonly tunable attention components in transformer models.
+
+This choice drastically reduces trainable parameters, making fine-tuning feasible on limited hardware.
+
+Verified model setup by printing trainable parameters via model.print_trainable_parameters().
+
+Created a custom collator to batch tokenized examples and ensure the PyTorch DataLoader receives properly shaped tensors (input_ids, attention_mask, and labels).
+
+Configured the SFTTrainer from Hugging Face’s trl library:
+
+Set gradient_accumulation_steps=4 and batch_size=1 to simulate larger batch sizes under memory constraints.
+
+Used adamw_torch optimizer and disabled FP16/BF16 due to CPU-only training.
+
+Kicked off training and saved the fine-tuned model and tokenizer to the mistral3b-finetuned directory for later inference.
+
+Verified data loading pipeline by inspecting sample batches, ensuring correctness of attention_mask and labels.
 
 
 
