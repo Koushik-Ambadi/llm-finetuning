@@ -1,58 +1,72 @@
 # model_training/tokenizer_utils.py
+
 from transformers import AutoTokenizer
-from model_training.config import model_path, prompt_prefix, max_seq_length, padding_type, truncation_side, padding_side
+from model_training.config import (
+    model_path,
+    prompt_prefix,
+    max_seq_length,
+    padding_type,
+    truncation_side,
+    padding_side
+)
+from model_training.debug_utils import save_checkpoint
+
 
 def load_tokenizer():
     tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
-    # If pad_token not defined, set pad_token = eos_token
+
+    # Set pad_token if not present
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
-    # Set truncation/padding side from config
+        print(f"[Tokenizer] pad_token not found. Using eos_token ({tokenizer.eos_token}) as pad_token.")
+
+    # Set tokenizer sides from config
     tokenizer.truncation_side = truncation_side
-    tokenizer.padding_side = padding_side  # or you could also get this from config
+    tokenizer.padding_side = padding_side
+
+    print(f"[Tokenizer] Loaded tokenizer from {model_path}")
+    print(f"[Tokenizer] Truncation side: {tokenizer.truncation_side}")
+    print(f"[Tokenizer] Padding side: {tokenizer.padding_side}")
+    print(f"[Tokenizer] Max sequence length: {max_seq_length}")
 
     return tokenizer
 
+
 def tokenize_function(batch, tokenizer):
-    # Build input texts with prompt_prefix
-    inputs = [prompt_prefix + desc for desc in batch.get("requirement_description", [])]
-    outputs = batch.get("test_steps", [])
+    prompt_strings = []
 
-    # Combine input + output
-    combined = [inp + "\n" + out for inp, out in zip(inputs, outputs)]
+    for user_input, assistant_output in zip(batch["input"], batch["output"]):
+        if not isinstance(user_input, str) or not isinstance(assistant_output, str):
+            print(f"[Warning] Skipping invalid input/output pair: {user_input}, {assistant_output}")
+            continue
 
-    tokenized = tokenizer(
-        combined,
-        max_length=max_seq_length,
-        padding=padding_type,        # True -> dynamic or based on collator
+        # Build chat messages as per tokenizer's template
+        messages = [
+            {"role": "user", "content": user_input},
+            {"role": "assistant", "content": assistant_output}
+        ]
+
+        try:
+            prompt = tokenizer.apply_chat_template(messages, tokenize=False)
+            prompt_strings.append(prompt)
+        except Exception as e:
+            print(f"[Warning] Failed to apply chat template. Input: {user_input[:30]}... Error: {e}")
+            continue
+
+    if not prompt_strings:
+        raise ValueError("No valid prompt strings generated from chat template.")
+
+    # Tokenize all prompts (batched)
+    model_inputs = tokenizer(
+        prompt_strings,
+        padding="max_length",  # fixed size for training (required for batching)
         truncation=True,
+        max_length=max_seq_length,
         return_attention_mask=True,
-        #return_tensors="pt"
+        return_tensors=None  # keep as dict of lists
     )
 
-    input_ids = tokenized["input_ids"]
-    attention_mask = tokenized["attention_mask"]
+    # Use input_ids as labels
+    model_inputs["labels"] = [list(ids) for ids in model_inputs["input_ids"]]
 
-    # Mask the labels: only output part should be used for loss
-    # We need to find where input ends in each sequence
-    # One simple way: tokenize the input_text (without output), count its length + special tokens
-    input_tokenized = tokenizer(
-        inputs,
-        max_length=max_seq_length,
-        padding=padding_type,
-        truncation=True,
-        return_attention_mask=False,
-        #return_tensors="pt"
-    )["input_ids"]
-
-    labels = [ids.copy() for ids in input_ids]  # deep copy each list
-
-    for i in range(len(labels)):
-        in_len = len(input_tokenized[i])
-        labels[i][:in_len] = [-100] * in_len
-
-    return {
-        "input_ids": input_ids,
-        "attention_mask": attention_mask,
-        "labels": labels
-    }
+    return model_inputs

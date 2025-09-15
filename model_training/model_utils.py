@@ -3,6 +3,8 @@
 from transformers import AutoModelForCausalLM
 from peft import prepare_model_for_kbit_training, LoraConfig, get_peft_model
 from model_training.config import model_path, target_modules,device_map
+from model_training.debug_utils import save_checkpoint
+
 
 def load_model():
     model = AutoModelForCausalLM.from_pretrained(
