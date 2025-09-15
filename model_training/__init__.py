@@ -1,5 +1,3 @@
-# model_training/__init__.py
-
 from .training_pipeline import train_model
 from .model_utils import load_model
 from .tokenizer_utils import load_tokenizer, tokenize_function

@@ -2,14 +2,14 @@
 
 from transformers import AutoModelForCausalLM
 from peft import prepare_model_for_kbit_training, LoraConfig, get_peft_model
-from model_training.config import model_path, target_modules
+from model_training.config import model_path, target_modules,device_map
 
 def load_model():
     model = AutoModelForCausalLM.from_pretrained(
         model_path,
         load_in_4bit=True,
         local_files_only=True,
-        device_map="cpu"
+        device_map=device_map
     )
 
     model = prepare_model_for_kbit_training(model)

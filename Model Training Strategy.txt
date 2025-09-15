@@ -1,0 +1,30 @@
+average token size is 600
+max token size is 10k very few samples can be ignored completly or truncated
+70 samples above 4000 tokens
+best case 2048 tokens to best cover all samples 
+4gb vram limits to 512 tokens pushing it to 1024
+
+using qlora
+
+
+having some null values in final data set 
+testcase_description          0
+test_steps                 3929
+requirement_description    6406
+handling in place right now will check why this happened
+--> for now completly removing "na" rows later we can fill them with empty strings for more data.
+
+
+
+
+******************** Experimental configurations ****************************
+max_seq_length = 1024  # Aggressive but reasonable for a demo
+train_batch_size = 1
+gradient_accumulation_steps = 4 or 8 have to increase epochs based on that
+tokenizer(..., 
+    truncation=True, 
+    max_length=1024, 
+    padding="max_length", 
+    return_tensors="pt"
+)
+

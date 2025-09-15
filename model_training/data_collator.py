@@ -4,7 +4,7 @@ import torch
 
 def data_collator(features):
     return {
-        "input_ids": torch.stack([f["input_ids"] for f in features]),
-        "attention_mask": torch.stack([f["attention_mask"] for f in features]),
-        "labels": torch.stack([f["labels"] for f in features]),
+        "input_ids": torch.stack([torch.tensor(f["input_ids"]) for f in features]),
+        "attention_mask": torch.stack([torch.tensor(f["attention_mask"]) for f in features]),
+        "labels": torch.stack([torch.tensor(f["labels"]) for f in features]),
     }
