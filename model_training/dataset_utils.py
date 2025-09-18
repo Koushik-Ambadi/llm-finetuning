@@ -2,7 +2,8 @@
 
 import pandas as pd
 from datasets import Dataset
-from model_training.config import prompt_prefix
+from model_training.config import prompt_prefix,split_test_size
+from model_training.debug_utils import save_checkpoint
 
 
 def format_prompt(batch):
@@ -15,15 +16,16 @@ def format_prompt(batch):
 
 def load_dataset(csv_path):
     df = pd.read_csv(csv_path)
+    df.drop(columns=['__index_level_0__'], errors='ignore', inplace=True)
     df.dropna(subset=['requirement_description', 'test_steps'], inplace=True) #should be handled in data prep
     #df[['requirement_description', 'test_steps']] = df[['requirement_description', 'test_steps']].fillna("")  '''for now we remove data in later sessions we can fill empty string'''
-    dataset = Dataset.from_pandas(df[['requirement_description', 'test_steps']])
+    dataset = Dataset.from_pandas(df[['requirement_description', 'test_steps']], preserve_index=False)
     dataset = dataset.map(format_prompt, batched=True)
     return dataset
 
 
 def preprocess_dataset(dataset):
     
-    return dataset.train_test_split(test_size=0.01, seed=42)
+    return dataset.train_test_split(test_size=split_test_size, seed=42)
 
 

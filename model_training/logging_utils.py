@@ -6,6 +6,7 @@ import threading
 from datetime import datetime
 import psutil
 import logging
+from model_training.debug_utils import save_checkpoint
 
 try:
     import pynvml
