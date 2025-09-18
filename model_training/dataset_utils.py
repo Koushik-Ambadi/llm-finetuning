@@ -2,7 +2,7 @@
 
 import pandas as pd
 from datasets import Dataset
-from model_training.config import prompt_prefix
+from model_training.config import prompt_prefix,split_test_size
 from model_training.debug_utils import save_checkpoint
 
 
@@ -26,6 +26,6 @@ def load_dataset(csv_path):
 
 def preprocess_dataset(dataset):
     
-    return dataset.train_test_split(test_size=0.01, seed=42)
+    return dataset.train_test_split(test_size=split_test_size, seed=42)
 
 

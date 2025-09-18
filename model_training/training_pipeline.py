@@ -4,9 +4,9 @@ import os
 import logging
 from functools import partial
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # Force training to use only GPU 0
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # Force training to use only GPU 0
 
-from transformers import set_seed
+from transformers import set_seed, BitsAndBytesConfig
 from trl import SFTTrainer, SFTConfig
 from accelerate import Accelerator
 
@@ -21,11 +21,37 @@ from model_training.logging_utils import setup_main_logger, start_hardware_loggi
 from model_training.debug_utils import save_checkpoint
 
 # Optional custom trainer
+from torch.optim import AdamW
+from transformers import trainer
+
+
 class CustomSFTTrainer(SFTTrainer):
     def compute_loss(self, model, inputs, return_outputs=False, **kwargs):
         device = next(model.parameters()).device
         inputs = {k: v.to(device) for k, v in inputs.items()}
         return super().compute_loss(model, inputs, return_outputs=return_outputs, **kwargs)
+
+    def create_optimizer(self):
+        if self.optimizer is None:
+            # ✅ Fix: Only include LoRA trainable parameters
+            trainable_params = [
+                {"params": [p for n, p in self.model.named_parameters() if p.requires_grad]}
+            ]
+
+            # Log names of trainable params (DEBUG)
+            print("✅ Trainable parameter names:")
+            for name, param in self.model.named_parameters():
+                if param.requires_grad:
+                    print(f" - {name}")
+
+            if not trainable_params:
+                raise ValueError("❌ No trainable parameters found. LoRA may not be applied correctly.")
+
+            self.optimizer = AdamW(trainable_params, lr=self.args.learning_rate)
+
+        return self.optimizer
+
+
 
 def debug_log_tokenized_sample(logger, tokenized_dataset, tokenizer, num_samples=3):
     logger.info(f"\n📌 Logging first {num_samples} tokenized samples for debugging:")
@@ -39,8 +65,8 @@ def debug_log_tokenized_sample(logger, tokenized_dataset, tokenizer, num_samples
         logger.info(f"Token count: {len(input_ids)}")
         logger.info(f"Decoded prompt:\n{decoded[:1000]}{'...' if len(decoded) > 1000 else ''}")
         logger.info(f"Attention mask (first 50): {attention_mask[:50]}{'...' if len(attention_mask) > 50 else ''}")
-        num_zeros = (attention_mask == 0).sum().item()
-        logger.info(f"Number of masked (0) tokens: {num_zeros}")
+        num_zeros = (attention_mask == -100).sum().item()
+        logger.info(f"Number of masked (-100) tokens: {num_zeros}")
 
 
         logger.info("-" * 60)
@@ -70,6 +96,7 @@ def train_model():
         logger.info(f"Tokenizer vocab size: {tokenizer.vocab_size}")
 
         model = load_model()
+        
         logger.info("✅ Model loaded")
 
         # Tokenize training and test datasets
@@ -103,7 +130,7 @@ def train_model():
             per_device_train_batch_size=train_batch_size,
             gradient_accumulation_steps=gradient_accumulation,
             num_train_epochs=num_epochs,
-            logging_steps=5,
+            logging_steps=1, #sanity check using 1
             learning_rate=learning_rate,
             save_steps=100,
             save_total_limit=3,
